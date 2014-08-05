@@ -99,7 +99,7 @@ class Analytics(object):
 
         	  self.init_app(app)
 
-    def init_app(self, app):
+    def init_app(self, app, add_context_processor=False):
 
         if 'GOOGLE_ANALYTICS_ID' in app.config:
 
@@ -126,7 +126,15 @@ class Analytics(object):
 
             self.tracking_code.append(AnalyticsEngine.gosquared(app.config['GOSQUARED_ID']))
 
+        if add_context_processor:
+
+            app.context_processor(self._context_processor)
+
     @property
     def code(self):
 
         return Markup('\n'.join(self.tracking_code))
+
+    def _context_processor(self):
+
+        return dict(analytics=self.code)
